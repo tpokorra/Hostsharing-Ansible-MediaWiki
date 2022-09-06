@@ -13,8 +13,22 @@
   ##################################
   ## install MediaWiki
   ##################################
+  - name: create mediawiki directory
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    file:
+      path: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
+      state: directory
 
-  # TODO
+  - name: install mediawiki
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    unarchive:
+      creates: /home/pacs/{{pac}}/users/{{user}}/mediawiki/index.php
+      src: https://releases.wikimedia.org/mediawiki/{{mediawiki_version}}/mediawiki-{{mediawiki_release}}.tar.gz
+      remote_src: yes
+      extra_opts: [--strip-components=1] # to avoid the mediawiki-version directory
+      dest: /home/pacs/{{pac}}/users/{{user}}/mediawiki
 
   ##################################
   ## configuration
@@ -31,6 +45,27 @@
   ########################
   ## setup the apache site
   ########################
+  - name: check for htdocs-ssl directory
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    stat:
+      path: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/htdocs-ssl"
+    register: htdocs_exists
 
-  # TODO
+  - name: drop htdocs-ssl directory
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    file:
+      path: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/htdocs-ssl"
+      state: absent
+    when: htdocs_exists.stat.islnk is defined and htdocs_exists.stat.islnk == False
+
+  - name: create symbolic link for htdocs-ssl
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    file:
+      src: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
+      dest: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/htdocs-ssl"
+      state: link
+
 
