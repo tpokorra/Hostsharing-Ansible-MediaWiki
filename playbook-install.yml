@@ -30,17 +30,19 @@
       extra_opts: [--strip-components=1] # to avoid the mediawiki-version directory
       dest: /home/pacs/{{pac}}/users/{{user}}/mediawiki
 
-  ##################################
-  ## configuration
-  ##################################
-
-  # TODO
-
   ######################
   ## initialise instance
   ######################
-
-  # TODO
+  - name: Initialise LocalSettings and Database
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    # see https://www.mediawiki.org/wiki/Manual:Install.php
+    shell: |
+      php maintenance/install.php --dbname={{pac}}_{{user}} --dbserver="localhost"  --dbuser={{pac}}_{{user}} --dbpass={{password}} --server="https://{{domain}}" --scriptpath="" --lang=de --pass="{{AdminPasswd}}" "{{Sitename}}" "{{AdminName}}" || exit -1
+    args:
+      executable: /bin/bash
+      chdir: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
+      creates: "/home/pacs/{{pac}}/users/{{user}}/mediawiki/LocalSettings.php"
 
   ########################
   ## setup the apache site
