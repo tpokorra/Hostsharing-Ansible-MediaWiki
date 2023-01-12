@@ -12,6 +12,8 @@ mediawiki:
       AdminName: "WikiAdmin"
       AdminPasswd: "TopSecret"
 
+      mediawiki_directory: "mediawiki"
+
       # see https://www.mediawiki.org/wiki/Download
       mediawiki_version: 1.35
-      mediawiki_release: 1.35.7
+      mediawiki_release: 1.35.9

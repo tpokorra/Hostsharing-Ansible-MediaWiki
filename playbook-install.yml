@@ -17,18 +17,18 @@
     become: yes
     become_user: "{{pac}}-{{user}}"
     file:
-      path: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
+      path: "/home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}"
       state: directory
 
   - name: install mediawiki
     become: yes
     become_user: "{{pac}}-{{user}}"
     unarchive:
-      creates: /home/pacs/{{pac}}/users/{{user}}/mediawiki/index.php
+      creates: /home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}/index.php
       src: https://releases.wikimedia.org/mediawiki/{{mediawiki_version}}/mediawiki-{{mediawiki_release}}.tar.gz
       remote_src: yes
       extra_opts: [--strip-components=1] # to avoid the mediawiki-version directory
-      dest: /home/pacs/{{pac}}/users/{{user}}/mediawiki
+      dest: /home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}
 
   ######################
   ## initialise instance
@@ -41,8 +41,8 @@
       php maintenance/install.php --dbname={{pac}}_{{user}} --dbserver="localhost"  --dbuser={{pac}}_{{user}} --dbpass={{password}} --server="https://{{domain}}" --scriptpath="" --lang=de --pass="{{AdminPasswd}}" "{{Sitename}}" "{{AdminName}}" || exit -1
     args:
       executable: /bin/bash
-      chdir: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
-      creates: "/home/pacs/{{pac}}/users/{{user}}/mediawiki/LocalSettings.php"
+      chdir: "/home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}"
+      creates: "/home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}/LocalSettings.php"
 
   ########################
   ## setup the apache site
@@ -66,7 +66,7 @@
     become: yes
     become_user: "{{pac}}-{{user}}"
     file:
-      src: "/home/pacs/{{pac}}/users/{{user}}/mediawiki"
+      src: "/home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}"
       dest: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/htdocs-ssl"
       state: link
 
