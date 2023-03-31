@@ -11,6 +11,13 @@
       url: https://releases.wikimedia.org/mediawiki/{{mediawiki_version}}/mediawiki-{{mediawiki_release}}.patch.gz
       dest: /home/pacs/{{pac}}/users/{{user}}
 
+  # mediawiki_release == 1.35.10
+  #- name: upload fixed images .htaccess file so that patch works
+  #  become: yes
+  #  template:
+  #    dest: "/home/pacs/{{pac}}/users/{{user}}/{{mediawiki_directory}}/images/.htaccess"
+  #    src: "templates/original_image_htaccess_1_35_9"
+
   - name: apply the patch
     become: yes
     shell: |

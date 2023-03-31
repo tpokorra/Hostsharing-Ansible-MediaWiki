@@ -70,4 +70,10 @@
       dest: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/htdocs-ssl"
       state: link
 
-
+  - name: update htaccess in dom directory for hiding images directory listing
+    become: yes
+    become_user: "{{pac}}-{{user}}"
+    lineinfile:
+      path: "/home/pacs/{{pac}}/users/{{user}}/doms/{{domain}}/.htaccess"
+      line: "Options -Indexes"
+      create: true
